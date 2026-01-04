@@ -8,13 +8,13 @@ import pandas as pd
 import Prefix_Tree as trie
 import sqlite3
 
-
-conn = sqlite3.connect('search_engine.db')
+def get_conn():
+    return sqlite3.connect('search_engine.db',check_same_thread = False)
 
 # 2. Load tables into DataFrames
+conn = get_conn()
 keywords_df = pd.read_sql_query("SELECT * FROM keywords_table", conn)
-food_dict_df = pd.read_sql_query("SELECT * FROM food_dict_table", conn)
-food_macros_df = pd.read_sql_query("SELECT * FROM food_macros_table", conn)
+
 
 
 # Create root node
@@ -26,7 +26,7 @@ root = trie.TrieNode()
 for row in keywords_df.itertuples():
     trie.insert(root,row.words.lower())
     
-
+conn.close()
 # Take each word from input use prefix tree search functions return macros and title for each food associated
 
 def search(words):
@@ -39,7 +39,6 @@ def search(words):
 
         prefix_result = trie.prefix(root,word)
         if prefix_result:
-            print(prefix_result)
             search_list = search_list + prefix_result
     # Use results of search saved in search_list to look up all dictionary entries with word
     # Use all entries to get all fdc ids in list and then search up each id and give macros output
@@ -64,31 +63,25 @@ def search(words):
         LIMIT 10
 
         """
+        conn = get_conn()
         results_df = pd.read_sql_query(query,conn,params=search_list)   
-        print(results_df) 
-    else: 
-        print("No matches")
-
+        result = results_df.to_dict(orient='records')
+        conn.close()
+        return result
+    else:
+    	result = "No Matches Found"
+    	return result	
     
  # Strip new line characters and lowercase text output before proccesing
-def terminal():
+ # Strip new line characters and lowercase text output before proccesing
+def Proccess_Input(text):
     try:
-        while True:
-            text = input(">").strip().lower()
-            if text == ("quit"):
-                break
+         re_pattern = r'\b[a-z0-9]{2,}\b'
+         words = re.findall(re_pattern,text)
+         return search(words)
             
-            # Pattern is any string of numbers and letter 2 chars long with a white space border 
-
-            re_pattern = r'\b[a-z0-9]{2,}\b'
-            words = re.findall(re_pattern,text)
-            search(words)
-            if text == ("quit"):
-                break
     except Exception as error:
-        print(error)
-        terminal()
+        return error
 
-terminal()
 
 

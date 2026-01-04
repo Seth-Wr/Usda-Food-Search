@@ -1,0 +1,12 @@
+# Virtual environments
+venv/
+.env/
+.env*/
+.venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Pip installer
+get-pip.py
