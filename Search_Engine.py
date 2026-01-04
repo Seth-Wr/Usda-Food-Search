@@ -60,7 +60,7 @@ def search(words):
         WHERE d.words IN ({placeholders})
         GROUP BY d.fdc_id       
         ORDER BY match_score DESC
-        LIMIT 10
+        LIMIT 20
 
         """
         conn = get_conn()
@@ -69,9 +69,9 @@ def search(words):
         conn.close()
         return result
     else:
-    	result = "No Matches Found"
-    	return result	
-    
+        result = "No Matches Found."
+        return result
+
  # Strip new line characters and lowercase text output before proccesing
  # Strip new line characters and lowercase text output before proccesing
 def Proccess_Input(text):

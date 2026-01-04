@@ -30,7 +30,7 @@ def search(query: str):
         WHERE d.words IN ({placeholders})
         GROUP BY d.fdc_id       
         ORDER BY match_score DESC
-        LIMIT 10
+        LIMIT 20
 
        
     """
