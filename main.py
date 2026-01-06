@@ -2,13 +2,7 @@ from fastapi import FastAPI
 import Search_Engine
 
 
-app = FastAPI()
-
-
-@app.get("/")
-async def root():
-    return {"message": "Welcome to the api docs for macros-finder search engine please go to the /search endpoint to interact with the macro database"}
-
+app = FastAPI(docs_url='/')
 
 @app.get("/search/{query}")
 def search(query: str):
